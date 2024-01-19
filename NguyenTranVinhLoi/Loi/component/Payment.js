@@ -1,20 +1,56 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { CartContext } from '../CartProvider/CartContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Payment = () => {
   const [cardNumber, setCardNumber] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [cvv, setCVV] = useState('');
+  const [cartItems, setCartItems] = useState([]);
+  const navigation = useNavigation();
+  const { updateCartItemCount } = useContext(CartContext);
 
-  const handlePayment = () => {
-    // Xử lý thanh toán khi nhấn nút "Thanh toán"
+//-----------------------------------------------------------------------------------
+ 
+  //-----------------------------------------------------------------------------------------
+  const handleRemoveItem = async (itemId) => {
+    try {
+      const updatedCartItems = cartItems.map(item => {
+        if (item.id === itemId) {
+          item.quantity -= 1;
+          if (item.quantity === 0) {
+            return null;
+          }
+        }
+        return item;
+      }).filter(Boolean);
+
+      setCartItems(updatedCartItems);
+      await AsyncStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+
+      updateCartItemCount(getCartItemCount(updatedCartItems));
+    } catch (error) {
+      console.log('Error removing item from cart:', error);
+    }
+  };
+
+  const getCartItemCount = (cartItems) => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  };
+  //---------------------------------------------------------------------------
+  const handlePayment = async (itemId) => {
+    handleRemoveItem(itemId);
+    alert("Đặt hàng thành công!");
+   navigation.navigate('HomeScreen');
   };
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Image source={require('../assets/logoshop.png')} style={styles.logo} />
+        <Image source={require('../assets/images/pc.jpg')} style={styles.logo} />
       </View>
 
       <View style={styles.formGroup}>
@@ -27,21 +63,22 @@ const Payment = () => {
         />
       </View>
 
-      {/* <View style={styles.formGroup}>
-        <Text style={styles.label}>Ngày hết hạn</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="MM/YY"
-          value={expiryDate}
-          onChangeText={setExpiryDate}
-        />
-      </View> */}
-
       <View style={styles.formGroup}>
         <Text style={styles.label}>CVV</Text>
         <TextInput
           style={styles.input}
           placeholder="Nhập CVV"
+          value={cvv}
+          onChangeText={setCVV}
+          secureTextEntry
+        />
+      </View>
+
+      <View style={styles.formGroup}>
+        <Text style={styles.label}>Date</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="mm/yyyy"
           value={cvv}
           onChangeText={setCVV}
           secureTextEntry

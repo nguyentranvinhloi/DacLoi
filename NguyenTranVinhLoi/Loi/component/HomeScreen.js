@@ -42,7 +42,7 @@ export default function HomeScreen() {
   return (
     <View>
       <View style={styles.catetitle}>
-        <Text style={styles.titleText}>Sản phẩm</Text>
+        <Text style={styles.titleText}>Tất cả sản phẩm</Text>
       </View>
       <ScrollView>
         <View style={styles.container}>

@@ -18,7 +18,7 @@ const CartScreen = () => {
   useEffect(() => {
     calculateTotalPrice();
   }, [cartItems]);
-
+  //------------------------------------------------------------------------------------------
   const fetchCartItems = async () => {
     try {
       const cartItemsData = await AsyncStorage.getItem('cartItems');
@@ -31,8 +31,50 @@ const CartScreen = () => {
       console.log('Error fetching cart items:', error);
     }
   };
-
+  //------------------------------------------------------------------------------------------Xoa
   const handleRemoveItem = async (itemId) => {
+    try {
+      const updatedCartItems = cartItems.map(item => {
+        if (item.id === itemId) {
+            return null;
+        }
+        return item;
+      }).filter(Boolean);
+
+      setCartItems(updatedCartItems);
+      await AsyncStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+
+      updateCartItemCount(getCartItemCount(updatedCartItems));
+    } catch (error) {
+      console.log('Error removing item from cart:', error);
+    }
+  };
+
+  const getCartCount = (cartItems) => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  };
+  //------------------------------------------------------------------------------------------Tăng
+  const handleAItem = async (itemId) => {
+    try {
+      const updatedCartItems = cartItems.map(item => {
+        if (item.id === itemId) {
+          item.quantity += 1;
+          if (item.quantity === 10) {
+            return null;
+          }
+        }
+        return item;
+      }).filter(Boolean);
+      setCartItems(updatedCartItems);
+      await AsyncStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+      updateCartItemCount(getCartItemCount(updatedCartItems));
+    } catch (error) {
+      console.log('Error removing item from cart:', error);
+    }
+  };
+  
+  //------------------------------------------------------------------------------------------Giam
+  const handleDItem = async (itemId) => {
     try {
       const updatedCartItems = cartItems.map(item => {
         if (item.id === itemId) {
@@ -43,22 +85,19 @@ const CartScreen = () => {
         }
         return item;
       }).filter(Boolean);
-
       setCartItems(updatedCartItems);
       await AsyncStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
-
       updateCartItemCount(getCartItemCount(updatedCartItems));
-
     } catch (error) {
       console.log('Error removing item from cart:', error);
     }
   };
-
+  //------------------------------------------------------------------------------------------
   const calculateTotalPrice = () => {
     const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
     setTotalPrice(totalPrice);
   };
-
+  //------------------------------------------------------------------------------------------
   const getCartItemCount = (cartItems) => {
     return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
@@ -66,10 +105,10 @@ const CartScreen = () => {
   const handleCheckout = () => {
     navigation.navigate('Thanh toán');
   };
-
+  //------------------------------------------------------------------------------------------
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Cart</Text>
+      <Text style={styles.title}>Giỏ hàng</Text>
       {cartItems.length > 0 ? (
         <FlatList
           data={cartItems}
@@ -78,20 +117,35 @@ const CartScreen = () => {
               <Image source={{ uri: item.image }} style={styles.cartItemImage} />
               <View style={styles.cartItemInfo}>
                 <Text style={styles.cartItemTitle}>{item.title} ({item.quantity})</Text>
-                <Text style={styles.cartItemPrice}>Price: ${item.price.toFixed(2)}</Text>
+                <Text style={styles.cartItemPrice}>Giá: ${item.price.toFixed(2)}</Text>
               </View>
+              <TouchableOpacity onPress={() => handleAItem(item.id)}>
+                <Text style={styles.removeItemButton}>Thêm   </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => handleDItem(item.id)}>
+                <Text style={styles.removeItemButtonn}>Giảm   </Text>
+              </TouchableOpacity>
+
               <TouchableOpacity onPress={() => handleRemoveItem(item.id)}>
-                <Text style={styles.removeItemButton}>Remove</Text>
+                <Text style={styles.removeItemButtonnn}>Xóa</Text>
               </TouchableOpacity>
             </View>
           )}
           keyExtractor={(item) => item.id.toString()}
         />
       ) : (
-        <Text style={styles.emptyCartText}>Your cart is empty.</Text>
+        <View>
+          <Text style={styles.emptyCartText}>Giỏ hàng của bạn chưa có sản phẩm nào!</Text>
+          <Image
+            source={require('../assets/images/cartemty.png')}
+            style={{ width: 350, height: 300 }}
+          />
+        </View>
+
       )}
-      <Text style={styles.totalPrice}>Total Price: ${totalPrice.toFixed(2)}</Text>
-      <Button title="Checkout" onPress={handleCheckout} />
+      <Text style={styles.totalPrice}>Tổng tiền: ${totalPrice.toFixed(2)}</Text>
+      <Button title="Thanh toán" onPress={handleCheckout} />
     </View>
   );
 };
@@ -105,7 +159,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 16,
-    color:'red',
+    color: 'red',
   },
   cartItem: {
     flexDirection: 'row',
@@ -126,10 +180,21 @@ const styles = StyleSheet.create({
   },
   cartItemPrice: {
     fontSize: 14,
+    color: 'orange',
+  },
+  removeItemButtonnn: {
+    fontSize: 14,
+    color: 'red',
+    marginTop: 8,
+  },
+  removeItemButtonn: {
+    fontSize: 14,
+    color: 'green',
+    marginTop: 8,
   },
   removeItemButton: {
     fontSize: 14,
-    color: 'red',
+    color: 'blue',
     marginTop: 8,
   },
   emptyCartText: {
@@ -141,6 +206,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 16,
     textAlign: 'center',
+    color: 'blue',
   },
 });
 

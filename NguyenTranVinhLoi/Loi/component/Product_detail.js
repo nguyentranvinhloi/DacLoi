@@ -62,15 +62,15 @@ const SingleProductScreen = () => {
     <View style={styles.container}>
       <Image source={{ uri: product.image }} style={styles.image} />
       <Text style={styles.title}>{product.title}</Text>
-      <Text style={styles.price}>Price: ${product.price.toFixed(2)}</Text>
+      <Text style={styles.price}>Giá: ${product.price.toFixed(2)}</Text>
       <Text style={styles.description}>{product.description}</Text>
       <View style={styles.ratingContainer}>
-        <Text style={styles.ratingText}>Rating: </Text>
+        <Text style={styles.ratingText}>Bình chọn: </Text>
         {Array.from({ length: Math.floor(product.rating.rate) }).map((_, index) => (
           <Text key={index} style={styles.starIcon}>⭐</Text>
         ))}
         <Text style={styles.ratingValue}>{product.rating.rate.toFixed(1)}</Text>
-        <Text style={styles.ratingCount}>({product.rating.count} reviews)</Text>
+        <Text style={styles.ratingCount}>({product.rating.count} đánh giá)</Text>
       </View>
       <View style={styles.buyContainer}>
         <TextInput
@@ -103,10 +103,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
     textAlign: 'center',
+    color: 'grey',
   },
   price: {
     fontSize: 16,
     marginBottom: 12,
+    color: 'red',
   },
   description: {
     fontSize: 14,
@@ -145,7 +147,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   buyButton: {
-    backgroundColor: 'blue',
+    backgroundColor: 'green',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 4,
