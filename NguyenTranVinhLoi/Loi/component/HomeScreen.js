@@ -57,12 +57,12 @@ export default function HomeScreen() {
               </View>
               <View style={styles.des}>
                 <Text style={styles.des_text}>{product.title}</Text>
-                <Text style={styles.price}>Price: ${product.price.toFixed(2)}</Text>
+                <Text style={styles.price}>Giá: ${product.price.toFixed(2)}</Text>
                 <View style={styles.ratingContainer}>
-                  <Text style={styles.ratingText}>Rating: </Text>
+                  {/* <Text style={styles.ratingText}>Rating: </Text> */}
                   <FontAwesome name="star" style={styles.starIcon} />
                   <Text style={styles.ratingValue}>{product.rating.rate.toFixed(1)}</Text>
-                  <Text style={styles.ratingCount}>({product.rating.count} reviews)</Text>
+                  <Text style={styles.ratingCount}>({product.rating.count} đánh giá)</Text>
                 </View>
                 <View>
                   {/* <TouchableOpacity
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   price: {
-    color: 'black',
+    color: 'blue',
     textAlign: 'center',
     marginBottom: 4,
     fontSize: 14,
